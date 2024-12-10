@@ -37,8 +37,21 @@ export class NewsController {
     description: '데이터베이스에 저장되어있는 모든 본당소식을 불러옵니다.',
   })
   @ApiOkResponse({
-    type: NewsEntity,
-    isArray: true,
+    schema: {
+      example: {
+        page: '1',
+        limit: '10',
+        data: [
+          {
+            id: 1,
+            title: 'string',
+            created_at: 'string',
+            content: 'string',
+            imgUrl: 'string',
+          },
+        ],
+      },
+    },
   })
   async findAll(
     @Query('page') page: string = '1',

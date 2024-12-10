@@ -37,8 +37,20 @@ export class WeeklysController {
     description: '데이터베이스에 저장되어있는 모든 주보을 불러옵니다.',
   })
   @ApiOkResponse({
-    type: WeeklyseEntity,
-    isArray: true,
+    schema: {
+      example: {
+        page: '1',
+        limit: '10',
+        data: [
+          {
+            id: 1,
+            title: 'string',
+            created_at: 'string',
+            imgUrl: 'string',
+          },
+        ],
+      },
+    },
   })
   async findAll(
     @Query('page') page: string = '1',

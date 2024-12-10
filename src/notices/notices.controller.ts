@@ -37,8 +37,21 @@ export class NoticesController {
     description: '데이터베이스에 저장되어있는 모든 공지사항을 불러옵니다.',
   })
   @ApiOkResponse({
-    type: NoticeEntity,
-    isArray: true,
+    schema: {
+      example: {
+        page: '1',
+        limit: '10',
+        data: [
+          {
+            id: 1,
+            title: 'string',
+            content: 'string',
+            created_at: 'string',
+            imgUrl: 'string',
+          },
+        ],
+      },
+    },
   })
   async findAll(
     @Query('page') page: string = '1',
