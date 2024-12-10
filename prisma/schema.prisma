@@ -16,19 +16,19 @@ model User {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model news {
-  id         BigInt   @id @default(autoincrement())
-  created_at DateTime @db.Timestamptz(6)
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now()) @db.Timestamptz(6)
   title      String?
   content    String?
-  imgUrl     String?  @db.VarChar
+  imgUrl     String?
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model notices {
-  id         BigInt   @id @default(autoincrement())
-  created_at DateTime @db.Timestamptz(6)
-  img_url    String?  @db.VarChar
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  img_url    String?
   title      String?
   content    String?
 }
@@ -36,8 +36,8 @@ model notices {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model weeklys {
-  id         BigInt   @id @default(autoincrement())
-  created_at DateTime @db.Timestamptz(6)
-  imgUrl     String?  @db.VarChar
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  imgUrl     String?
   title      String?
 }

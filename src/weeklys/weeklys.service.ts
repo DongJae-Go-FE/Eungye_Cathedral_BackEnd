@@ -11,7 +11,7 @@ export class WeeklysService {
 
   async createWeeklys(createWeeklysDto: CreateWeeklysDto) {
     return await this.prisma.weeklys.create({
-      data: { ...createWeeklysDto },
+      data: { ...createWeeklysDto, id: +createWeeklysDto.id },
     });
   }
 

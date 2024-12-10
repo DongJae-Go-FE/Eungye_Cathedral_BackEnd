@@ -1,8 +1,10 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory, HttpAdapterHost } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { SwaggerTheme, SwaggerThemeNameEnum } from 'swagger-themes';
 import { BaseAPIDocument } from './swagger.document';
+import { ClassValidatorException } from './util/class-validator-exeption';
 import { PrismaClientExceptionFilter } from './util/prisma-client-exception.filter';
 
 async function bootstrap() {
@@ -12,6 +14,15 @@ async function bootstrap() {
     req.headers['content-type'] = 'application/json';
     next();
   });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      exceptionFactory: (errors) => new ClassValidatorException(errors),
+    }),
+  );
+
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
 

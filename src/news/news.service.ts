@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { PrismaService } from 'src/prisma/prisma.service';
-
 import { CreateNewsDto } from './dto/create-news.dto';
 import { UpdateNewsDto } from './dto//update-news.dto';
 
@@ -11,7 +10,7 @@ export class NewsService {
 
   async createNews(createNewsDto: CreateNewsDto) {
     return await this.prisma.news.create({
-      data: { ...createNewsDto },
+      data: { ...createNewsDto, id: +createNewsDto.id },
     });
   }
 

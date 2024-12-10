@@ -1,3 +1,5 @@
+import { Transform } from 'class-transformer';
+import { IsInt, IsPositive } from 'class-validator';
 import { IsNonEmptyString } from 'src/validate-decorators';
 
 export class CreateNoticesDto {
@@ -6,4 +8,9 @@ export class CreateNoticesDto {
 
   @IsNonEmptyString()
   content: string;
+
+  @Transform(({ value }) => Number(value))
+  @IsInt()
+  @IsPositive()
+  id: number;
 }
