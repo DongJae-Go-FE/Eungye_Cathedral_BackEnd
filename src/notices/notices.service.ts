@@ -15,8 +15,11 @@ export class NoticesService {
     });
   }
 
-  async findAllNotices() {
+  async findAllNotices(page: number, limit: number) {
+    const skip = (page - 1) * limit;
     return await this.prisma.notices.findMany({
+      skip: skip,
+      take: limit,
       orderBy: {
         created_at: 'desc',
       },

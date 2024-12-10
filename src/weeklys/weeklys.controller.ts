@@ -6,7 +6,7 @@ import {
   Param,
   Patch,
   Delete,
-  // Query,
+  Query,
 } from '@nestjs/common';
 import { WeeklysService } from './weeklys.service';
 import { CreateWeeklysDto } from './dto/create-weeklys.dto';
@@ -40,8 +40,13 @@ export class WeeklysController {
     type: WeeklyseEntity,
     isArray: true,
   })
-  findAll() {
-    return this.weeklysService.findAllWeeklys();
+  findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+  ) {
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+    return this.weeklysService.findAllWeeklys(pageNumber, limitNumber);
   }
 
   // @Get('/search')

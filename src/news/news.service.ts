@@ -14,8 +14,11 @@ export class NewsService {
     });
   }
 
-  async findAllNews() {
+  async findAllNews(page: number, limit: number) {
+    const skip = (page - 1) * limit;
     return await this.prisma.news.findMany({
+      skip: skip,
+      take: limit,
       orderBy: {
         created_at: 'desc',
       },

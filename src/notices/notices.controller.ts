@@ -6,7 +6,7 @@ import {
   Param,
   Patch,
   Delete,
-  // Query,
+  Query,
 } from '@nestjs/common';
 import { NoticesService } from './notices.service';
 import { CreateNoticesDto } from './dto/create-notices.dto';
@@ -40,8 +40,13 @@ export class NoticesController {
     type: NoticeEntity,
     isArray: true,
   })
-  findAll() {
-    return this.noticesService.findAllNotices();
+  findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+  ) {
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+    return this.noticesService.findAllNotices(pageNumber, limitNumber);
   }
 
   // @Get('/search')

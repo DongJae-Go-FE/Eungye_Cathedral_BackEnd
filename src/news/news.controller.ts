@@ -6,7 +6,7 @@ import {
   Param,
   Patch,
   Delete,
-  // Query,
+  Query,
 } from '@nestjs/common';
 import { NewsService } from './news.service';
 import { CreateNewsDto } from './dto/create-news.dto';
@@ -40,8 +40,13 @@ export class NewsController {
     type: NewsEntity,
     isArray: true,
   })
-  findAll() {
-    return this.newsService.findAllNews();
+  findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+  ) {
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+    return this.newsService.findAllNews(pageNumber, limitNumber);
   }
 
   // @Get('/search')
