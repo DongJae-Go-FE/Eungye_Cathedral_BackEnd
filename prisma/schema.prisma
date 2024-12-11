@@ -8,9 +8,9 @@ datasource db {
 }
 
 model User {
-  id       String @id
-  email    String @unique
-  password String
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  password String?
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
