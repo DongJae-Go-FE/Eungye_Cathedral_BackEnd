@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
+import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 import { CreateWeeklysDto } from './dto/create-weeklys.dto';
@@ -15,9 +16,18 @@ export class WeeklysService {
     });
   }
 
-  async findAllWeeklys(page: number, limit: number) {
+  async findAllWeeklys(page: number, limit: number, q?: string) {
     const skip = (page - 1) * limit;
+    const whereSearch = q
+      ? {
+          OR: [
+            { title: { contains: q, mode: Prisma.QueryMode.insensitive } },
+            // { content: { contains: q, mode: Prisma.QueryMode.insensitive } },
+          ],
+        }
+      : {};
     return await this.prisma.weeklys.findMany({
+      where: whereSearch,
       skip: skip,
       take: limit,
       orderBy: {

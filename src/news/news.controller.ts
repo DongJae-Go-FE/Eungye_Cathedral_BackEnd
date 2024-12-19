@@ -17,7 +17,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  // ApiQuery,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { NewsEntity } from './entitiy/news.entity';
@@ -53,39 +53,38 @@ export class NewsController {
       },
     },
   })
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: '제목 검색',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    type: String,
+    description: '페이지 시작',
+    required: true,
+  })
+  @ApiQuery({
+    name: 'limit',
+    type: String,
+    description: '보여줄 갯수',
+    required: true,
+  })
   async findAll(
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '10',
+    @Query('q') q?: string,
   ) {
     const pageNumber = parseInt(page, 10);
     const limitNumber = parseInt(limit, 10);
-
-    const data = await this.newsService.findAllNews(pageNumber, limitNumber);
+    const data = await this.newsService.findAllNews(pageNumber, limitNumber, q);
     return {
       page: pageNumber,
       limit: limitNumber,
       data: data,
     };
   }
-
-  // @Get('/search')
-  // @ApiOperation({
-  //   summary: '본당소식 검색하기',
-  //   description: '미정 기준으로 검색합니다',
-  // })
-  // @ApiQuery({
-  //   name: 'q',
-  //   type: String,
-  //   description: '미정 검색',
-  //   required: true,
-  // })
-  // @ApiOkResponse({
-  //   type: NewsEntity,
-  //   isArray: true,
-  // })
-  // findSearchResult(@Query('q') q?: string) {
-  //   return this.newsService.search???(q);
-  // }
 
   @Get(':id')
   @ApiOperation({

@@ -17,7 +17,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  // ApiQuery,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { WeeklyseEntity } from './entitiy/weeklys.entity';
@@ -35,6 +35,24 @@ export class WeeklysController {
   @ApiOperation({
     summary: '모든 주보 불러오기',
     description: '데이터베이스에 저장되어있는 모든 주보을 불러옵니다.',
+  })
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: '제목 검색',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    type: String,
+    description: '페이지 시작',
+    required: true,
+  })
+  @ApiQuery({
+    name: 'limit',
+    type: String,
+    description: '보여줄 갯수',
+    required: true,
   })
   @ApiOkResponse({
     schema: {
@@ -55,6 +73,7 @@ export class WeeklysController {
   async findAll(
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '10',
+    @Query('q') q?: string,
   ) {
     const pageNumber = parseInt(page, 10);
     const limitNumber = parseInt(limit, 10);
@@ -62,6 +81,7 @@ export class WeeklysController {
     const data = await this.weeklysService.findAllWeeklys(
       pageNumber,
       limitNumber,
+      q,
     );
     return {
       page: pageNumber,

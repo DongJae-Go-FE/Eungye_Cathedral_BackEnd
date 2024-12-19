@@ -17,7 +17,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  // ApiQuery,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { NoticeEntity } from './entitiy/notice.entity';
@@ -35,6 +35,24 @@ export class NoticesController {
   @ApiOperation({
     summary: '모든 공지사항 불러오기',
     description: '데이터베이스에 저장되어있는 모든 공지사항을 불러옵니다.',
+  })
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: '제목 검색',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    type: String,
+    description: '페이지 시작',
+    required: true,
+  })
+  @ApiQuery({
+    name: 'limit',
+    type: String,
+    description: '보여줄 갯수',
+    required: true,
   })
   @ApiOkResponse({
     schema: {
@@ -56,12 +74,14 @@ export class NoticesController {
   async findAll(
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '10',
+    @Query('q') q?: string,
   ) {
     const pageNumber = parseInt(page, 10);
     const limitNumber = parseInt(limit, 10);
     const data = await this.noticesService.findAllNotices(
       pageNumber,
       limitNumber,
+      q,
     );
 
     return {
