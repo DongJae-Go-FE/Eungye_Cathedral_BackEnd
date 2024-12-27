@@ -27,7 +27,11 @@ export class NoticesService {
         }
       : {};
 
-    return await this.prisma.notices.findMany({
+    const totalCount = await this.prisma.notices.count({
+      where: whereSearch,
+    });
+
+    const notices = await this.prisma.notices.findMany({
       where: whereSearch,
       skip: skip,
       take: limit,
@@ -35,6 +39,11 @@ export class NoticesService {
         created_at: 'desc',
       },
     });
+
+    return {
+      total: totalCount,
+      list: notices,
+    };
   }
 
   async findOneNotices(id: number) {

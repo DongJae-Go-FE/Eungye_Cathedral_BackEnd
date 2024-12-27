@@ -42,7 +42,7 @@ export class NewsService {
 
     return {
       total: totalCount,
-      news: news,
+      list: news,
     };
   }
 

@@ -26,7 +26,12 @@ export class WeeklysService {
           ],
         }
       : {};
-    return await this.prisma.weeklys.findMany({
+
+    const totalCount = await this.prisma.weeklys.count({
+      where: whereSearch,
+    });
+
+    const weeklys = await this.prisma.weeklys.findMany({
       where: whereSearch,
       skip: skip,
       take: limit,
@@ -34,6 +39,11 @@ export class WeeklysService {
         created_at: 'desc',
       },
     });
+
+    return {
+      total: totalCount,
+      list: weeklys,
+    };
   }
 
   async findOneWeeklys(id: number) {
