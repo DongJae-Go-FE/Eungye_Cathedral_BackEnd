@@ -41,15 +41,17 @@ export class NewsController {
       example: {
         page: '1',
         limit: '10',
-        data: [
-          {
-            id: 1,
-            title: 'string',
-            created_at: 'string',
-            content: 'string',
-            imgUrl: 'string',
-          },
-        ],
+        data: {
+          total: 1,
+          list: [
+            {
+              id: 1,
+              title: 'string',
+              created_at: 'string',
+              imgUrl: 'string',
+            },
+          ],
+        },
       },
     },
   })
