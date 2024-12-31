@@ -4,22 +4,45 @@ import {
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { ImagesService } from './images.service';
-import { ApiTags, ApiResponse } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  ApiTags,
+  ApiResponse,
+  ApiConsumes,
+  ApiBody,
+  ApiOperation,
+} from '@nestjs/swagger';
+import { UploadImagesDto } from './dto/upload-images.dto';
+import { UploadImagesResponse } from './dto/upload-images-response.dto';
 
-@ApiTags('images')
+@ApiTags('이미지 업로드')
 @Controller('images')
 export class ImagesController {
-  constructor(private readonly ImagesService: ImagesService) {}
+  constructor(private readonly imagesService: ImagesService) {}
 
   @Post('upload')
+  @ApiOperation({
+    summary: '이미지 파일 업로드',
+    description:
+      '해당 API 통신을 통해 이미지 파일을 업로드하고 URL을 생성합니다.',
+  })
   @UseInterceptors(FileInterceptor('file'))
-  @ApiResponse({ status: 201, description: '이미지 업로드 성공입니다.' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: '이미지 업로드',
+    type: UploadImagesDto,
+  })
+  @ApiResponse({
+    status: 201,
+    description: '이미지 업로드 성공입니다.',
+    type: UploadImagesResponse,
+  })
+  @ApiResponse({ status: 400, description: '잘못된 요청입니다.' })
   async uploadImage(
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<{ url: string }> {
-    const url = await this.ImagesService.uploadImage(file);
+  ): Promise<UploadImagesResponse> {
+    const url = await this.imagesService.uploadImage(file);
     return { url };
   }
 }
