@@ -7,7 +7,6 @@ export class AuthService {
   constructor(private prisma: PrismaService) {}
 
   async login(email: string, password: string) {
-    // 이메일로 사용자 찾기
     const user = await this.prisma.user.findUnique({
       where: { email },
     });

@@ -3,6 +3,8 @@ import {
   Post,
   UseInterceptors,
   UploadedFile,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { ImagesService } from './images.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -10,8 +12,8 @@ import {
   ApiTags,
   ApiResponse,
   ApiConsumes,
-  ApiBody,
   ApiOperation,
+  ApiBody,
 } from '@nestjs/swagger';
 import { UploadImagesDto } from './dto/upload-images.dto';
 import { UploadImagesResponse } from './dto/upload-images-response.dto';
@@ -30,7 +32,7 @@ export class ImagesController {
   @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
-    description: '이미지 업로드',
+    description: '업로드할 이미지 파일',
     type: UploadImagesDto,
   })
   @ApiResponse({
@@ -39,9 +41,16 @@ export class ImagesController {
     type: UploadImagesResponse,
   })
   @ApiResponse({ status: 400, description: '잘못된 요청입니다.' })
-  async uploadImage(
-    @UploadedFile() file: Express.Multer.File,
-  ): Promise<UploadImagesResponse> {
+  async uploadImage(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: '파일이 전달되지 않았습니다.',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     const url = await this.imagesService.uploadImage(file);
     return { url };
   }
