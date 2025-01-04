@@ -47,15 +47,15 @@ export class NoticesService {
   }
 
   async findOneNotices(id: number) {
-    const news = await this.prisma.notices.findUnique({
+    const notices = await this.prisma.notices.findUnique({
       where: {
         id: id,
       },
     });
-    if (!news) {
+    if (!notices) {
       throw new NotFoundException(`${id}번 공지사항은 존재하지 않습니다`);
     }
-    return news;
+    return notices;
   }
 
   async updateNotices(id: number, updateNoticesDto: UpdateNoticesDto) {

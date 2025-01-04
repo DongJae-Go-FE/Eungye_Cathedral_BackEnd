@@ -47,15 +47,15 @@ export class WeeklysService {
   }
 
   async findOneWeeklys(id: number) {
-    const news = await this.prisma.weeklys.findUnique({
+    const weeklys = await this.prisma.weeklys.findUnique({
       where: {
         id: id,
       },
     });
-    if (!news) {
+    if (!weeklys) {
       throw new NotFoundException(`${id}번 주보는 존재하지 않습니다`);
     }
-    return news;
+    return weeklys;
   }
 
   async updateWeeklys(id: number, updateWeeklysDto: UpdateWeeklysDto) {
