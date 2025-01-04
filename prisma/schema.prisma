@@ -28,7 +28,7 @@ model news {
 model notices {
   id         Int      @id @default(autoincrement())
   created_at DateTime @default(now()) @db.Timestamptz(6)
-  img_url    String?
+  imgUrl     String?
   title      String?
   content    String?
 }
