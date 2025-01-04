@@ -12,7 +12,7 @@ export class NewsService {
 
   async createNews(createNewsDto: CreateNewsDto) {
     return await this.prisma.news.create({
-      data: { ...createNewsDto, id: +createNewsDto.id },
+      data: { ...createNewsDto },
     });
   }
 

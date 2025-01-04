@@ -156,7 +156,7 @@ export class WeeklysController {
         imgUrl: {
           type: 'string',
           description: '이미지 url',
-          // nullable: true,
+          nullable: true,
         },
       },
     },
@@ -201,7 +201,7 @@ export class WeeklysController {
         imgUrl: {
           type: 'string',
           description: '이미지 url',
-          // nullable: true,
+          nullable: true,
         },
       },
     },

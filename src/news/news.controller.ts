@@ -120,10 +120,6 @@ export class NewsController {
     schema: {
       type: 'object',
       properties: {
-        id: {
-          type: 'number',
-          description: '아이디',
-        },
         title: {
           type: 'string',
           description: ' 제목',
@@ -136,7 +132,7 @@ export class NewsController {
         imgUrl: {
           type: 'string',
           description: '이미지 url',
-          // nullable: true,
+          nullable: true,
         },
       },
     },
@@ -181,7 +177,7 @@ export class NewsController {
         imgUrl: {
           type: 'string',
           description: '이미지 url',
-          // nullable: true,
+          nullable: true,
         },
       },
     },

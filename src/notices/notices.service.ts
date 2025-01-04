@@ -12,7 +12,7 @@ export class NoticesService {
 
   async createNotices(createNoticesDto: CreateNoticesDto) {
     return await this.prisma.notices.create({
-      data: { ...createNoticesDto, id: createNoticesDto.id },
+      data: { ...createNoticesDto },
     });
   }
 
