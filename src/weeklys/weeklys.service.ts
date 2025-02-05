@@ -31,6 +31,8 @@ export class WeeklysService {
       where: whereSearch,
     });
 
+    const totalPages = Math.ceil(totalCount / limit);
+
     const weeklys = await this.prisma.weeklys.findMany({
       where: whereSearch,
       skip: skip,
@@ -42,6 +44,7 @@ export class WeeklysService {
 
     return {
       total: totalCount,
+      totalPages: totalPages,
       list: weeklys,
     };
   }

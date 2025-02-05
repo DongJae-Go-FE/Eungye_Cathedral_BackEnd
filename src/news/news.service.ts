@@ -31,6 +31,8 @@ export class NewsService {
       where: whereSearch,
     });
 
+    const totalPages = Math.ceil(totalCount / limit);
+
     const news = await this.prisma.news.findMany({
       where: whereSearch,
       skip: skip,
@@ -42,6 +44,7 @@ export class NewsService {
 
     return {
       total: totalCount,
+      totalPages: totalPages,
       list: news,
     };
   }
