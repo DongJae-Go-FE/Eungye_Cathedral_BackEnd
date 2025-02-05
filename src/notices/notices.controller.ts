@@ -61,7 +61,7 @@ export class NoticesController {
         limit: '10',
         data: {
           total: 1,
-          totalPages: '1',
+          totalPages: 1,
           list: [
             {
               id: 1,
