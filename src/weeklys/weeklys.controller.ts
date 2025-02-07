@@ -135,7 +135,7 @@ export class WeeklysController {
 
   @Get(':id/adjacent')
   @ApiOperation({
-    summary: '지금 보고있는 상세 페이지 이전글과 다음글 정보 불러오기',
+    summary: '현재 상세 페이지 이전글과 다음글 정보 불러오기',
     description:
       '주보 상세 페이지의 id를 기준으로 이전글과 다음글의 정보를 불러옵니다.',
   })
