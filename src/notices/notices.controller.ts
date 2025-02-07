@@ -133,6 +133,40 @@ export class NoticesController {
     return this.noticesService.findOneNotices(id);
   }
 
+  @Get(':id/adjacent')
+  @ApiOperation({
+    summary: '지금 보고있는 상세 페이지 이전글과 다음글 정보 불러오기',
+    description:
+      '공지사항 상세 페이지의 id를 기준으로 이전글과 다음글의 정보를 불러옵니다.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: '이전글과 다음글 정보를 불러오려는 공지사항의 아이디',
+    type: Number,
+  })
+  @ApiOkResponse({
+    schema: {
+      example: {
+        previous: {
+          id: 1,
+          title: '이전 글 제목',
+          created_at: '2023-01-01T00:00:00.000Z',
+        },
+        next: {
+          id: 2,
+          title: '다음 글 제목',
+          created_at: '2023-01-02T00:00:00.000Z',
+        },
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: '이전 글이나 다음 글이 없습니다',
+  })
+  async findAdjacent(@Param('id') id: number) {
+    return this.noticesService.findAdjacentNotices(id);
+  }
+
   /*
    * POST
    */

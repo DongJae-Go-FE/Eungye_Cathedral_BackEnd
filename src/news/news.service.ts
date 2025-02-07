@@ -61,6 +61,34 @@ export class NewsService {
     return news;
   }
 
+  async findAdjacentNews(id: number) {
+    const allNews = await this.prisma.news.findMany({
+      select: {
+        id: true,
+        title: true,
+        created_at: true,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
+
+    const currentIndex = allNews.findIndex((news) => news.id === id);
+
+    if (currentIndex === -1) {
+      throw new NotFoundException(`${id}번 본당소식은 존재하지 않습니다`);
+    }
+
+    const previousNews = currentIndex > 0 ? allNews[currentIndex - 1] : null;
+    const nextNews =
+      currentIndex < allNews.length - 1 ? allNews[currentIndex + 1] : null;
+
+    return {
+      previous: previousNews || { message: '이전 글이 없습니다' },
+      next: nextNews || { message: '다음 글이 없습니다' },
+    };
+  }
+
   async updateNews(id: number, updateNewsDto: UpdateNewsDto) {
     return await this.prisma.news.update({
       where: {

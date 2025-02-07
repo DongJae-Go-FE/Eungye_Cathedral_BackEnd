@@ -61,6 +61,37 @@ export class WeeklysService {
     return weeklys;
   }
 
+  async findAdjacentWeeklys(id: number) {
+    const allWeeklys = await this.prisma.weeklys.findMany({
+      select: {
+        id: true,
+        title: true,
+        created_at: true,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
+
+    const currentIndex = allWeeklys.findIndex((weeklys) => weeklys.id === id);
+
+    if (currentIndex === -1) {
+      throw new NotFoundException(`${id}번 주보 존재하지 않습니다`);
+    }
+
+    const previousWeeklys =
+      currentIndex > 0 ? allWeeklys[currentIndex - 1] : null;
+    const nextWeeklys =
+      currentIndex < allWeeklys.length - 1
+        ? allWeeklys[currentIndex + 1]
+        : null;
+
+    return {
+      previous: previousWeeklys || { message: '이전 글이 없습니다' },
+      next: nextWeeklys || { message: '다음 글이 없습니다' },
+    };
+  }
+
   async updateWeeklys(id: number, updateWeeklysDto: UpdateWeeklysDto) {
     return await this.prisma.weeklys.update({
       where: {

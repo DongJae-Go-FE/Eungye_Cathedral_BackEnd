@@ -61,6 +61,37 @@ export class NoticesService {
     return notices;
   }
 
+  async findAdjacentNotices(id: number) {
+    const allNotices = await this.prisma.news.findMany({
+      select: {
+        id: true,
+        title: true,
+        created_at: true,
+      },
+      orderBy: {
+        id: 'asc',
+      },
+    });
+
+    const currentIndex = allNotices.findIndex((notices) => notices.id === id);
+
+    if (currentIndex === -1) {
+      throw new NotFoundException(`${id}번 공지사항은 존재하지 않습니다`);
+    }
+
+    const previousNotices =
+      currentIndex > 0 ? allNotices[currentIndex - 1] : null;
+    const nextNotices =
+      currentIndex < allNotices.length - 1
+        ? allNotices[currentIndex + 1]
+        : null;
+
+    return {
+      previous: previousNotices || { message: '이전 글이 없습니다' },
+      next: nextNotices || { message: '다음 글이 없습니다' },
+    };
+  }
+
   async updateNotices(id: number, updateNoticesDto: UpdateNoticesDto) {
     return await this.prisma.notices.update({
       where: {
