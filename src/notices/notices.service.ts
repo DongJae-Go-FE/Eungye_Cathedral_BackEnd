@@ -87,8 +87,8 @@ export class NoticesService {
         : null;
 
     return {
-      previous: previousNotices || { message: '이전 글이 없습니다' },
-      next: nextNotices || { message: '다음 글이 없습니다' },
+      previous: previousNotices || { title: '이전 글이 없습니다' },
+      next: nextNotices || { title: '다음 글이 없습니다' },
     };
   }
 

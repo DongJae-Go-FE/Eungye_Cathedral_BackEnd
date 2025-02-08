@@ -87,8 +87,8 @@ export class WeeklysService {
         : null;
 
     return {
-      previous: previousWeeklys || { message: '이전 글이 없습니다' },
-      next: nextWeeklys || { message: '다음 글이 없습니다' },
+      previous: previousWeeklys || { title: '이전 글이 없습니다' },
+      next: nextWeeklys || { title: '다음 글이 없습니다' },
     };
   }
 

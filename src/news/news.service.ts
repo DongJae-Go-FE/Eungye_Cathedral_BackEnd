@@ -84,8 +84,8 @@ export class NewsService {
       currentIndex < allNews.length - 1 ? allNews[currentIndex + 1] : null;
 
     return {
-      previous: previousNews || { message: '이전 글이 없습니다' },
-      next: nextNews || { message: '다음 글이 없습니다' },
+      previous: previousNews || { title: '이전 글이 없습니다' },
+      next: nextNews || { title: '다음 글이 없습니다' },
     };
   }
 
