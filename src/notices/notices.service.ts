@@ -72,26 +72,39 @@ export class NoticesService {
         id: 'asc',
       },
     });
+    const allNoticeWithState = allNotices.map((news) => ({
+      ...news,
+      state: true,
+    }));
 
-    const currentIndex = allNotices.findIndex((notices) => notices.id === id);
+    const currentIndex = allNoticeWithState.findIndex(
+      (notices) => notices.id === id,
+    );
 
     if (currentIndex === -1) {
       throw new NotFoundException(`${id}번 공지사항은 존재하지 않습니다`);
     }
 
     const previousNotices =
-      currentIndex > 0 ? allNotices[currentIndex - 1] : null;
+      currentIndex > 0 ? allNoticeWithState[currentIndex - 1] : null;
     const nextNotices =
-      currentIndex < allNotices.length - 1
-        ? allNotices[currentIndex + 1]
+      currentIndex < allNoticeWithState.length - 1
+        ? allNoticeWithState[currentIndex + 1]
         : null;
 
     return {
       previous: previousNotices || {
+        id: '',
         title: '이전 글이 없습니다',
+        created_at: '',
         state: false,
       },
-      next: nextNotices || { title: '다음 글이 없습니다', state: false },
+      next: nextNotices || {
+        id: '',
+        title: '다음 글이 없습니다',
+        created_at: '',
+        state: false,
+      },
     };
   }
 

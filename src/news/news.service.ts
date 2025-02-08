@@ -72,20 +72,37 @@ export class NewsService {
         id: 'asc',
       },
     });
+    const allNewsWithState = allNews.map((news) => ({
+      ...news,
+      state: true,
+    }));
 
-    const currentIndex = allNews.findIndex((news) => news.id === id);
+    const currentIndex = allNewsWithState.findIndex((news) => news.id === id);
 
     if (currentIndex === -1) {
       throw new NotFoundException(`${id}번 본당소식은 존재하지 않습니다`);
     }
 
-    const previousNews = currentIndex > 0 ? allNews[currentIndex - 1] : null;
+    const previousNews =
+      currentIndex > 0 ? allNewsWithState[currentIndex - 1] : null;
     const nextNews =
-      currentIndex < allNews.length - 1 ? allNews[currentIndex + 1] : null;
+      currentIndex < allNewsWithState.length - 1
+        ? allNewsWithState[currentIndex + 1]
+        : null;
 
     return {
-      previous: previousNews || { title: '이전 글이 없습니다', state: false },
-      next: nextNews || { title: '다음 글이 없습니다', state: false },
+      previous: previousNews || {
+        id: '',
+        title: '이전 글이 없습니다',
+        created_at: '',
+        state: false,
+      },
+      next: nextNews || {
+        id: '',
+        title: '다음 글이 없습니다',
+        created_at: '',
+        state: false,
+      },
     };
   }
 

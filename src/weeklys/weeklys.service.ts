@@ -88,10 +88,17 @@ export class WeeklysService {
 
     return {
       previous: previousWeeklys || {
+        id: '',
         title: '이전 글이 없습니다',
+        created_at: '',
         state: false,
       },
-      next: nextWeeklys || { title: '다음 글이 없습니다', state: false },
+      next: nextWeeklys || {
+        id: '',
+        title: '다음 글이 없습니다',
+        created_at: '',
+        state: false,
+      },
     };
   }
 

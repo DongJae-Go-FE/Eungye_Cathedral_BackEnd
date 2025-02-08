@@ -15,6 +15,7 @@ import {
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -151,17 +152,39 @@ export class NoticesController {
           id: 1,
           title: '이전 글 제목',
           created_at: '2023-01-01T00:00:00.000Z',
+          state: true,
         },
         next: {
           id: 2,
           title: '다음 글 제목',
           created_at: '2023-01-02T00:00:00.000Z',
+          state: true,
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: '현재 페이지는 있고 이전 글이나 다음 글이 없는 경우',
+    schema: {
+      example: {
+        previous: {
+          id: '',
+          title: '이전 글이 없습니다',
+          created_at: '',
+          state: false,
+        },
+        next: {
+          id: '',
+          title: '다음 글이 없습니다',
+          created_at: '',
+          state: false,
         },
       },
     },
   })
   @ApiNotFoundResponse({
-    description: '이전 글이나 다음 글이 없습니다',
+    description: '현재 페이지가 없을 경우',
   })
   async findAdjacent(@Param('id') id: number) {
     return this.noticesService.findAdjacentNotices(id);
