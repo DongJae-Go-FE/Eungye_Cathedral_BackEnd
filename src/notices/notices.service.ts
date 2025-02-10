@@ -62,7 +62,7 @@ export class NoticesService {
   }
 
   async findAdjacentNotices(id: number) {
-    const allNotices = await this.prisma.news.findMany({
+    const allNotices = await this.prisma.notices.findMany({
       select: {
         id: true,
         title: true,
@@ -72,8 +72,8 @@ export class NoticesService {
         id: 'asc',
       },
     });
-    const allNoticeWithState = allNotices.map((news) => ({
-      ...news,
+    const allNoticeWithState = allNotices.map((notices) => ({
+      ...notices,
       state: true,
     }));
 
