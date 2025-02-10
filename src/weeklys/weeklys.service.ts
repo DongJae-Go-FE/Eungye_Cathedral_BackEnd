@@ -73,17 +73,24 @@ export class WeeklysService {
       },
     });
 
-    const currentIndex = allWeeklys.findIndex((weeklys) => weeklys.id === id);
+    const allWeeklysWithState = allWeeklys.map((weeklys) => ({
+      ...weeklys,
+      state: true,
+    }));
+
+    const currentIndex = allWeeklysWithState.findIndex(
+      (weeklys) => weeklys.id === id,
+    );
 
     if (currentIndex === -1) {
       throw new NotFoundException(`${id}번 주보 존재하지 않습니다`);
     }
 
     const previousWeeklys =
-      currentIndex > 0 ? allWeeklys[currentIndex - 1] : null;
+      currentIndex > 0 ? allWeeklysWithState[currentIndex - 1] : null;
     const nextWeeklys =
       currentIndex < allWeeklys.length - 1
-        ? allWeeklys[currentIndex + 1]
+        ? allWeeklysWithState[currentIndex + 1]
         : null;
 
     return {
