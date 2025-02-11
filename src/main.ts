@@ -31,7 +31,7 @@ async function bootstrap() {
   const theme = new SwaggerTheme();
   const options = {
     explorer: false,
-    url: '/swagger-ui/swagger-ui.css',
+    url: 'https://eungye-backend.vercel.app/api',
     customCss: theme.getBuffer(SwaggerThemeNameEnum.CLASSIC),
   };
   SwaggerModule.setup('api', app, document, options);
