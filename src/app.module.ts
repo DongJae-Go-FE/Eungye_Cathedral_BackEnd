@@ -8,12 +8,6 @@ import { WeeklysModule } from './weeklys/weeklys.module';
 import { AuthModule } from './auth/auth.module';
 import { ImagesModule } from './images/images.module';
 
-import {
-  ServeStaticModule,
-  ServeStaticModuleOptions,
-} from '@nestjs/serve-static';
-import { join } from 'path';
-
 @Module({
   imports: [
     AuthModule,
@@ -22,12 +16,6 @@ import { join } from 'path';
     NoticesModule,
     WeeklysModule,
     PrismaModule,
-    ServeStaticModule.forRoot([
-      {
-        rootPath: join(__dirname, '..', 'public'),
-        serveRoot: '/static/',
-      },
-    ] as ServeStaticModuleOptions),
   ],
   controllers: [AppController],
   providers: [AppService],
