@@ -1,8 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-
 import { CreateNoticesDto } from './dto/create-notices.dto';
 import { UpdateNoticesDto } from './dto/update-notice.dto';
 
@@ -11,8 +9,8 @@ export class NoticesService {
   constructor(private prisma: PrismaService) {}
 
   async createNotices(createNoticesDto: CreateNoticesDto) {
-    return await this.prisma.notices.create({
-      data: { ...createNoticesDto },
+    return this.prisma.notices.create({
+      data: createNoticesDto,
     });
   }
 
@@ -20,86 +18,73 @@ export class NoticesService {
     const skip = (page - 1) * limit;
     const whereSearch = q
       ? {
-          OR: [
-            { title: { contains: q, mode: Prisma.QueryMode.insensitive } },
-            // { content: { contains: q, mode: Prisma.QueryMode.insensitive } },
-          ],
+          OR: [{ title: { contains: q, mode: Prisma.QueryMode.insensitive } }],
         }
       : {};
 
-    const totalCount = await this.prisma.notices.count({
-      where: whereSearch,
-    });
+    const [totalCount, notices] = await Promise.all([
+      this.prisma.notices.count({ where: whereSearch }),
+      this.prisma.notices.findMany({
+        where: whereSearch,
+        skip,
+        take: limit,
+        orderBy: {
+          created_at: 'desc',
+        },
+      }),
+    ]);
 
     const totalPages = Math.ceil(totalCount / limit);
 
-    const notices = await this.prisma.notices.findMany({
-      where: whereSearch,
-      skip: skip,
-      take: limit,
-      orderBy: {
-        created_at: 'desc',
-      },
-    });
-
     return {
       total: totalCount,
-      totalPages: totalPages,
+      totalPages,
       list: notices,
     };
   }
 
   async findOneNotices(id: number) {
     const notices = await this.prisma.notices.findUnique({
-      where: {
-        id: id,
-      },
+      where: { id },
     });
+
     if (!notices) {
       throw new NotFoundException(`${id}번 공지사항은 존재하지 않습니다`);
     }
+
     return notices;
   }
 
   async findAdjacentNotices(id: number) {
-    const allNotices = await this.prisma.notices.findMany({
-      select: {
-        id: true,
-        title: true,
-        created_at: true,
-      },
-      orderBy: {
-        id: 'asc',
-      },
+    const currentNotice = await this.prisma.notices.findUnique({
+      where: { id },
+      select: { id: true },
     });
-    const allNoticeWithState = allNotices.map((notices) => ({
-      ...notices,
-      state: true,
-    }));
 
-    const currentIndex = allNoticeWithState.findIndex(
-      (notices) => notices.id === id,
-    );
-
-    if (currentIndex === -1) {
+    if (!currentNotice) {
       throw new NotFoundException(`${id}번 공지사항은 존재하지 않습니다`);
     }
 
-    const previousNotices =
-      currentIndex > 0 ? allNoticeWithState[currentIndex - 1] : null;
-    const nextNotices =
-      currentIndex < allNoticeWithState.length - 1
-        ? allNoticeWithState[currentIndex + 1]
-        : null;
+    const previousNotice = await this.prisma.notices.findFirst({
+      where: { id: { lt: id } },
+      orderBy: { id: 'desc' },
+      select: { id: true, title: true, created_at: true },
+    });
+
+    const nextNotice = await this.prisma.notices.findFirst({
+      where: { id: { gt: id } },
+      orderBy: { id: 'asc' },
+      select: { id: true, title: true, created_at: true },
+    });
 
     return {
-      previous: previousNotices || {
+      previous: previousNotice || {
         id: '',
         title: '이전 글이 없습니다',
         created_at: '',
         state: false,
       },
-      next: nextNotices || {
+      next: nextNotice || {
         id: '',
         title: '다음 글이 없습니다',
         created_at: '',
@@ -109,19 +94,15 @@ export class NoticesService {
   }
 
   async updateNotices(id: number, updateNoticesDto: UpdateNoticesDto) {
-    return await this.prisma.notices.update({
-      where: {
-        id: +id,
-      },
+    return this.prisma.notices.update({
+      where: { id },
       data: updateNoticesDto,
     });
   }
 
   async removeNotices(id: number) {
     await this.prisma.notices.delete({
-      where: {
-        id: id,
-      },
+      where: { id },
     });
   }
 }

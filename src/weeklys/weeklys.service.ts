@@ -1,8 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-
 import { CreateWeeklysDto } from './dto/create-weeklys.dto';
 import { UpdateWeeklysDto } from './dto/update-weeklys.dto';
 
@@ -11,87 +9,75 @@ export class WeeklysService {
   constructor(private prisma: PrismaService) {}
 
   async createWeeklys(createWeeklysDto: CreateWeeklysDto) {
-    return await this.prisma.weeklys.create({
-      data: { ...createWeeklysDto },
+    return this.prisma.weeklys.create({
+      data: createWeeklysDto,
     });
   }
 
   async findAllWeeklys(page: number, limit: number, q?: string) {
     const skip = (page - 1) * limit;
+
     const whereSearch = q
       ? {
-          OR: [
-            { title: { contains: q, mode: Prisma.QueryMode.insensitive } },
-            // { content: { contains: q, mode: Prisma.QueryMode.insensitive } },
-          ],
+          OR: [{ title: { contains: q, mode: Prisma.QueryMode.insensitive } }],
         }
       : {};
 
-    const totalCount = await this.prisma.weeklys.count({
-      where: whereSearch,
-    });
+    const [totalCount, weeklys] = await Promise.all([
+      this.prisma.weeklys.count({ where: whereSearch }),
+      this.prisma.weeklys.findMany({
+        where: whereSearch,
+        skip,
+        take: limit,
+        orderBy: {
+          created_at: 'desc',
+        },
+      }),
+    ]);
 
     const totalPages = Math.ceil(totalCount / limit);
 
-    const weeklys = await this.prisma.weeklys.findMany({
-      where: whereSearch,
-      skip: skip,
-      take: limit,
-      orderBy: {
-        created_at: 'desc',
-      },
-    });
-
     return {
       total: totalCount,
-      totalPages: totalPages,
+      totalPages,
       list: weeklys,
     };
   }
 
   async findOneWeeklys(id: number) {
     const weeklys = await this.prisma.weeklys.findUnique({
-      where: {
-        id: id,
-      },
+      where: { id },
     });
+
     if (!weeklys) {
       throw new NotFoundException(`${id}번 주보는 존재하지 않습니다`);
     }
+
     return weeklys;
   }
 
   async findAdjacentWeeklys(id: number) {
-    const allWeeklys = await this.prisma.weeklys.findMany({
-      select: {
-        id: true,
-        title: true,
-        created_at: true,
-      },
-      orderBy: {
-        id: 'asc',
-      },
+    const currentWeeklys = await this.prisma.weeklys.findUnique({
+      where: { id },
+      select: { id: true },
     });
 
-    const allWeeklysWithState = allWeeklys.map((weeklys) => ({
-      ...weeklys,
-      state: true,
-    }));
-
-    const currentIndex = allWeeklysWithState.findIndex(
-      (weeklys) => weeklys.id === id,
-    );
-
-    if (currentIndex === -1) {
-      throw new NotFoundException(`${id}번 주보 존재하지 않습니다`);
+    if (!currentWeeklys) {
+      throw new NotFoundException(`${id}번 주보는 존재하지 않습니다`);
     }
 
-    const previousWeeklys =
-      currentIndex > 0 ? allWeeklysWithState[currentIndex - 1] : null;
-    const nextWeeklys =
-      currentIndex < allWeeklys.length - 1
-        ? allWeeklysWithState[currentIndex + 1]
-        : null;
+    const [previousWeeklys, nextWeeklys] = await Promise.all([
+      this.prisma.weeklys.findFirst({
+        where: { id: { lt: id } },
+        orderBy: { id: 'desc' },
+        select: { id: true, title: true, created_at: true },
+      }),
+      this.prisma.weeklys.findFirst({
+        where: { id: { gt: id } },
+        orderBy: { id: 'asc' },
+        select: { id: true, title: true, created_at: true },
+      }),
+    ]);
 
     return {
       previous: previousWeeklys || {
@@ -110,19 +96,15 @@ export class WeeklysService {
   }
 
   async updateWeeklys(id: number, updateWeeklysDto: UpdateWeeklysDto) {
-    return await this.prisma.weeklys.update({
-      where: {
-        id: +id,
-      },
+    return this.prisma.weeklys.update({
+      where: { id },
       data: updateWeeklysDto,
     });
   }
 
   async removeWeeklys(id: number) {
     await this.prisma.weeklys.delete({
-      where: {
-        id: id,
-      },
+      where: { id },
     });
   }
 }
