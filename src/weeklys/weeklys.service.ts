@@ -32,6 +32,11 @@ export class WeeklysService {
         orderBy: {
           created_at: 'desc',
         },
+        select: {
+          id: true,
+          title: true,
+          created_at: true,
+        },
       }),
     ]);
 
@@ -50,22 +55,13 @@ export class WeeklysService {
     });
 
     if (!weeklys) {
-      throw new NotFoundException(`${id}번 주보는 존재하지 않습니다`);
+      this.handleNotFound(id);
     }
 
     return weeklys;
   }
 
   async findAdjacentWeeklys(id: number) {
-    const currentWeeklys = await this.prisma.weeklys.findUnique({
-      where: { id },
-      select: { id: true },
-    });
-
-    if (!currentWeeklys) {
-      throw new NotFoundException(`${id}번 주보는 존재하지 않습니다`);
-    }
-
     const [previousWeeklys, nextWeeklys] = await Promise.all([
       this.prisma.weeklys.findFirst({
         where: { id: { lt: id } },
@@ -84,13 +80,11 @@ export class WeeklysService {
         id: '',
         title: '이전 글이 없습니다',
         created_at: '',
-        state: false,
       },
       next: nextWeeklys || {
         id: '',
         title: '다음 글이 없습니다',
         created_at: '',
-        state: false,
       },
     };
   }
@@ -106,5 +100,9 @@ export class WeeklysService {
     await this.prisma.weeklys.delete({
       where: { id },
     });
+  }
+
+  private handleNotFound(id: number) {
+    throw new NotFoundException(`${id}번 주보는 존재하지 않습니다`);
   }
 }

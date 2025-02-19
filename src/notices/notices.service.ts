@@ -31,6 +31,11 @@ export class NoticesService {
         orderBy: {
           created_at: 'desc',
         },
+        select: {
+          id: true,
+          title: true,
+          created_at: true,
+        },
       }),
     ]);
 
@@ -56,39 +61,29 @@ export class NoticesService {
   }
 
   async findAdjacentNotices(id: number) {
-    const currentNotice = await this.prisma.notices.findUnique({
-      where: { id },
-      select: { id: true },
-    });
-
-    if (!currentNotice) {
-      throw new NotFoundException(`${id}번 공지사항은 존재하지 않습니다`);
-    }
-
-    const previousNotice = await this.prisma.notices.findFirst({
-      where: { id: { lt: id } },
-      orderBy: { id: 'desc' },
-      select: { id: true, title: true, created_at: true },
-    });
-
-    const nextNotice = await this.prisma.notices.findFirst({
-      where: { id: { gt: id } },
-      orderBy: { id: 'asc' },
-      select: { id: true, title: true, created_at: true },
-    });
+    const [previousNotice, nextNotice] = await Promise.all([
+      this.prisma.notices.findFirst({
+        where: { id: { lt: id } },
+        orderBy: { id: 'desc' },
+        select: { id: true, title: true, created_at: true },
+      }),
+      this.prisma.notices.findFirst({
+        where: { id: { gt: id } },
+        orderBy: { id: 'asc' },
+        select: { id: true, title: true, created_at: true },
+      }),
+    ]);
 
     return {
       previous: previousNotice || {
         id: '',
         title: '이전 글이 없습니다',
         created_at: '',
-        state: false,
       },
       next: nextNotice || {
         id: '',
         title: '다음 글이 없습니다',
         created_at: '',
-        state: false,
       },
     };
   }

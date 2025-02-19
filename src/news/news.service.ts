@@ -32,6 +32,11 @@ export class NewsService {
         orderBy: {
           created_at: 'desc',
         },
+        select: {
+          id: true,
+          title: true,
+          created_at: true,
+        },
       }),
     ]);
 
@@ -57,15 +62,6 @@ export class NewsService {
   }
 
   async findAdjacentNews(id: number) {
-    const currentNews = await this.prisma.news.findUnique({
-      where: { id },
-      select: { id: true },
-    });
-
-    if (!currentNews) {
-      throw new NotFoundException(`${id}번 본당소식은 존재하지 않습니다`);
-    }
-
     const [previousNews, nextNews] = await Promise.all([
       this.prisma.news.findFirst({
         where: { id: { lt: id } },
@@ -84,13 +80,11 @@ export class NewsService {
         id: '',
         title: '이전 글이 없습니다',
         created_at: '',
-        state: false,
       },
       next: nextNews || {
         id: '',
         title: '다음 글이 없습니다',
         created_at: '',
-        state: false,
       },
     };
   }
