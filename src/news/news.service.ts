@@ -32,11 +32,6 @@ export class NewsService {
         orderBy: {
           created_at: 'desc',
         },
-        select: {
-          id: true,
-          title: true,
-          created_at: true,
-        },
       }),
     ]);
 

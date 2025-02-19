@@ -32,11 +32,6 @@ export class WeeklysService {
         orderBy: {
           created_at: 'desc',
         },
-        select: {
-          id: true,
-          title: true,
-          created_at: true,
-        },
       }),
     ]);
 
@@ -55,7 +50,7 @@ export class WeeklysService {
     });
 
     if (!weeklys) {
-      this.handleNotFound(id);
+      throw new NotFoundException(`${id}번 주보는 존재하지 않습니다`);
     }
 
     return weeklys;
@@ -100,9 +95,5 @@ export class WeeklysService {
     await this.prisma.weeklys.delete({
       where: { id },
     });
-  }
-
-  private handleNotFound(id: number) {
-    throw new NotFoundException(`${id}번 주보는 존재하지 않습니다`);
   }
 }
