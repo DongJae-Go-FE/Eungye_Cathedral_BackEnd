@@ -30,7 +30,7 @@ export class NoticesController {
   constructor(private readonly noticesService: NoticesService) {}
 
   /*
-   * GET
+   * GET.
    */
   @Get()
   @ApiOperation({
